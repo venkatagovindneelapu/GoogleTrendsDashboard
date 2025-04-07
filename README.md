@@ -1,111 +1,123 @@
 # Google Trends Dashboard
 
-## 📅 Project Overview
+## 📌 Project Overview
+This Power BI dashboard leverages **Google Trends API via SerpAPI** to track and analyze real-time and historical keyword search interest across five major sectors:
 
-This project is a **real-time keyword trend analysis dashboard** powered by the **Google Trends API**, focused on five critical sectors: **Jobs, Education, Finance, Technology, and Healthcare**. The core idea is that **what people search most reflects what they want or need most**. Whether it's skill gaps, job demand, or rising public interest, this dashboard helps decode user intent across countries.
+> **Jobs, Education, Finance, Technology, and Healthcare**
 
-The dashboard empowers:
-- 📈 **Businesses** to align strategies with rising market demand
-- 🎓 **Educators** to understand trending skills
-- 📄 **Governments** to identify regional needs
-- 🚀 **Job seekers** to focus on in-demand areas
+The project reveals what people are actively seeking across different countries—whether it's job opportunities, upskilling, financial advice, tech awareness, or health-related trends. By visualizing these patterns, the dashboard empowers stakeholders to make **informed decisions based on public search behavior**.
 
 ---
 
-## 🛠️ Technology Stack
-- **Google Trends API** – Fetching real-time keyword data
-- **Python (Pandas, NumPy, Requests)** – Cleaning and processing
-- **SQL (PostgreSQL)** – Data storage and query optimization
-- **Power BI** – Visual storytelling and dashboarding
-- **DAX** – Custom measures and insights
+## 🧰 Technology Stack
+- **SerpAPI - Google Trends API** for real-time & historical trend extraction
+- **Power BI** for building visual, filterable dashboards
+- **Power Query (M language)** to call APIs and process JSON
+- **Python (Pandas, NumPy)** for data validation and structure testing
+- **DAX (Data Analysis Expressions)** for trend calculations and KPI metrics
 
 ---
 
-## 📦 Data Flow Architecture
+## 🔄 Data Sources & Query Design
+All keyword trend data was fetched via **SerpAPI**, using the following Google Trends API calls:
 
-1. **Data Extraction**: Google Trends API is queried for search volume data by sector and country.
-2. **Data Processing**: Python scripts clean, transform, and structure the data.
-3. **Storage**: Processed data is pushed into SQL tables.
-4. **Visualization**: Power BI fetches from SQL, computes insights via DAX, and presents the findings.
+### ✅ 1. Country-Wise Interest (Geo Trends)
+```m
+https://serpapi.com/search.json?engine=google_trends&q=Jobs,Education,Finance,Technology,Healthcare&data_type=GEO_MAP&date=today 5-y&tz=-330&api_key=YOUR_KEY
+```
+Returns interest by country/region over a 5-year period.
 
----
+### ✅ 2. Historical Keyword Timeseries
+```m
+https://serpapi.com/search?engine=google_trends&q=Jobs,Education,Finance,Technology,Healthcare&data_type=TIMESERIES&date=all&tz=-330&api_key=YOUR_KEY
+```
+Used in Page 2 to show **keyword trends over the past 5+ years**.
 
-## 📈 Dashboard Pages & Visual Insights
+### ✅ 3. Last 7 Days Real-Time Tracking
+```m
+https://serpapi.com/search?engine=google_trends&q=Jobs,Education,Finance,Technology,Healthcare&data_type=TIMESERIES&date=now 7-d&tz=-330&api_key=YOUR_KEY
+```
+Drives real-time charts (Page 3) to show **current public interest**.
 
-### 🌐 Page 1: Country-Wise Keyword Trends ("Overview")
-- **Objective**: Identify which sector is most searched in a selected country.
-- **Visuals**: Sankey diagram, Pie chart, and Line chart.
-- ✅ **Insight**: Argentina, for example, shows "Jobs" as the top search sector, indicating workforce demand and employment intent.
-- **Card**: Total Search Interest = **22K**; Interest Share = **20%**.
-
-### 🗒️ Page 2: Keyword Performance by Date
-- **Objective**: Track sector keyword activity across a timeline.
-- **Visuals**: Stacked bar chart and donut chart over **March 12–19**.
-- ✅ **Insight**: March 18 showed a spike in "Jobs" and "Education" interest, showing short-term needs, likely exam or job deadline-related.
-- **Highlights**: Trending Keyword = **Education**, Search Volume = **22K**, Popularity Score = **845**.
-
-### ⏱️ Page 3: Last 7 Days Real-Time Analysis
-- **Objective**: Live trend monitoring based on the latest weekly data.
-- **Visuals**: Date-filtered bar charts and a global keyword map.
-- ✅ **Insight**: Visualizes how keyword activity changes **daily**, showing spikes and drops in interest per country.
-
-### 🌟 Page 4: Rising vs. Top Keywords
-- **Objective**: Distinguish between fast-growing and consistently top keywords.
-- **Visuals**: Bar + line chart, KPI tiles.
-- ✅ **Insight**:
-  - **Rising**: "Cover Letter" (70), "Full-time Job" (40)
-  - **Top**: "Job" (100), "Remote Work" (8), "Part-time Job" (5)
-- **Category Card**: "Academic Discipline" appears with a popularity score of **257**, suggesting intense interest in educational advancement.
+### ✅ 4. Related Keywords (Rising & Top)
+```m
+https://serpapi.com/search.json?engine=google_trends&q=The Developer&data_type=RELATED_TOPICS&api_key=YOUR_KEY
+```
+Used in Page 4 to distinguish between **Rising vs. Top Keywords**.
 
 ---
 
-## 🔄 Interactive Features
-- ✉ **Filter by Country, Sector, Date**
-- ⏰ **Real-time Updates from Google Trends API**
-- 👌 **Smooth navigation buttons between pages**
+## 📊 Dashboard Page Explanations
+
+### 🌍 Page 1: **Country-Wise Keyword Insights**
+- **Visuals**: World Map + Bar Chart + Line Graph + Sankey Chart
+- **Metrics**:
+  - Total Interest: **27K+** (Sum of keyword searches)
+  - Highest: **Jobs (~15K)**
+  - Lowest: **Technology (~2.7K)**
+- **Insight**: Regions like Argentina showed highest interest in "Jobs," suggesting employment needs dominate.
+
+### 🕒 Page 2: **Keyword Trends Over Time**
+- **Visuals**: Line Chart by Year + Sector Filters + Pie Chart
+- **Data**: 5-year historical breakdown
+- **Insight**: "Education" saw consistent growth since 2020; "Finance" dipped during early 2021.
+- **Filters**: Year, Quarter, Month, Sector
+
+### 📅 Page 3: **Last 7 Days Real-Time Analysis**
+- **Visuals**: Multi-colored stacked bar, donut chart, trend line
+- **Timeframe**: March 12–19
+- **Trending Keyword**: **Education** on March 18
+- **Search Volume**: **22K**, Popularity Score: **845**
+
+### 📈 Page 4: **Rising vs. Top Keywords (Keyword Strength)**
+- **Rising Keywords**:
+  - "Cover Letter" (70)
+  - "Full-Time Job" (40)
+- **Top Keywords**:
+  - "Job" (100)
+  - "Remote Work" (8)
+- **Category Highlighted**: **Academic Discipline – 257.00**
+- **Insight**: Indicates strong rising interest in job-seeking and education pathways
 
 ---
 
-## 🚄 Deployment & Maintenance
-
-### Deployment Steps
-1. API setup with `pytrends`
-2. Data extraction and processing in Python
-3. Storage into SQL
-4. Power BI data connection and report building
-5. Publish via Power BI Service
-
-### Maintenance Strategy
-- ⏳ Automate daily fetch/update scripts
-- ⚡ Optimize SQL queries for performance
-- 🌐 Expand industry filters & country scope
+## 🎛 Interactive Features
+- ✅ Filter by **Date, Sector, Country**
+- 🔄 Pulls **latest SerpAPI data** automatically
+- 📍 Navigation between pages with action buttons
+- 🧠 DAX Measures used for:
+  - Popularity Score
+  - Total Interest
+  - Real-time trending rank
 
 ---
 
-## 📅 Why I Built This
-The idea behind this project is simple yet impactful: **People's search intent is a reflection of their needs**.
-
-If "Jobs" are the most searched sector in a country, then people there are **seeking employment** or career change. If "Education" spikes, they may be **trying to upskill**. This dashboard brings those patterns to light.
-
-It bridges the gap between **search data and strategic action**, helping users understand where interest lies and **how to act on it**.
+## 🚀 Deployment Strategy
+1. Paste provided M scripts in Power BI advanced editor
+2. Replace `api_key` with your SerpAPI key
+3. Set refresh schedule in Power BI Service (optional)
 
 ---
 
-## 💼 Use Cases & Benefits
-- 💼 **Recruiters**: Identify hiring trends and popular job terms.
-- 🌐 **Governments**: Detect economic shifts and societal needs.
-- 📚 **Educators**: Tailor course offerings to trending skills.
-- 🚀 **Marketers**: Time campaigns around what people are actively searching.
+## 💡 Why This Project Matters
+> **Search trends reveal intention.**
+
+When a country's most searched term is "Jobs," it's not just data—it's a signal. That country’s people are actively looking for opportunities. If "Education" is trending, it suggests a desire for learning or upskilling.
+
+This dashboard **translates public interest into actionable insight**.
+
 
 ---
 
-## 🎉 Final Thoughts
-This dashboard turns **Google Search data into decision-making gold**. As it evolves, I plan to add:
-- Forecasting via **Prophet/ARIMA**
-- Cross-country comparisons
-- Skill-gap mapping
+## 🧠 Future Enhancements
+- ✅ Integrate **Prophet or ARIMA** forecasting
+- ✅ Add keyword-based **job recommendations**
+- ✅ Predict sectoral demand by geography
 
-Thanks for reading! Feel free to ⭐ this repo or connect with me on [LinkedIn](#) if you'd like to collaborate on more data-driven projects!
+---
+
+## 👋 Let’s Connect
+Want to try the dashboard or need help building trend intelligence tools? Message me or connect on [LinkedIn](#).
 
 ---
 
